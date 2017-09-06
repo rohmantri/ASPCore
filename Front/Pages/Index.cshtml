@@ -1,0 +1,170 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="row >
+    <table class="table" id="list">
+       
+    </table>
+</div>
+
+<form>
+    <div class="row">
+        <div class="col-md-1">
+            <label>ID</label>
+        </div>
+        <div class="col-md-3">
+            <input type="number" id="id" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label>Name</label>
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="name" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label>Alamat</label>
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="address" />
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <button type="button" id="getBtn" onclick="get();" class="btn btn-danger">Get</button>
+    <button type="button" class="btn btn-warning" onclick="update();">Update</button>
+    <button type="button" class="btn btn-warning" onclick="insert();">Insert</button>
+    <button type="button" class="btn btn-danger" onclick="del();">Remove</button>
+</div>
+
+<script>
+
+    function get()
+    { 
+        var baseLink = "http://localhost:52729/api/karyawans";
+
+            var id = $("#id").val();
+
+            var urlP = "";
+            if (id > 0)
+            { 
+                urlP += "/"+id;
+            } 
+
+            var urls = baseLink + urlP
+
+        $.ajax({
+            url: urls,
+            crossOrigin: true,
+            type: 'GET',
+            accept: 'application/json'
+        }).done(function (data) {
+            
+            load(data);
+        });
+    }
+
+    function insert() {
+        var baseLink = "http://localhost:52729/api/karyawans";
+
+        var nama = $("#name").val();
+        var address = $("#address").val();
+        var oKr = {
+            id:0,
+            nama: nama,
+            alamat: address,
+            tanggalLahir :"1990-12-12T00:00:00",
+            createTime: "1990-12-12T00:00:00",
+            lastModifiedTime: "1990-12-12T00:00:00"
+        };
+        console.log(oKr);
+        $.ajax({
+            url: baseLink,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(oKr),
+            accept: 'application/json'
+        }).done(function (data) {
+            load(data)
+        });
+    }
+
+    function update() {
+        var baseLink = "http://localhost:52729/api/karyawans";
+        var id = $("#id").val();
+        var nama = $("#name").val();
+        var address = $("#address").val();
+        var oKr = {
+            id: 0,
+            nama: nama,
+            alamat: address,
+            tanggalLahir: "1990-12-12T00:00:00",
+            createTime: "1990-12-12T00:00:00",
+            lastModifiedTime: "1990-12-12T00:00:00"
+        };
+        console.log(oKr);
+        $.ajax({
+            url: baseLink+"/"+id,
+            type: 'PUT',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(oKr),
+            accept: 'application/json'
+        }).done(function (data) {
+            load(data)
+        });
+    }
+
+    function del() {
+        var baseLink = "http://localhost:52729/api/karyawans";
+
+        var id = $("#id").val();
+
+        var urlP = "";
+        if (id > 0) {
+            urlP += "/" + id;
+        }
+
+        var urls = baseLink + urlP
+
+        $.ajax({
+            url: urls,
+            crossOrigin: true,
+            type: 'DELETE',
+            accept: 'application/json'
+        }).done(function (data) {
+
+            load(data);
+        });
+    }
+
+    function load(data)
+    { 
+        var head = "<table class='table'><thead><tr>ID</tr><tr>Nama</tr><tr>Alamat</tr></thead><tbody>";
+
+        if (data.length) {
+            for (var i = 0; i < data.length; i++) {
+
+                head += "<tr><td>" + data[i].id + "</td>" + "<td>" + data[i].nama + "</td>" + "<td>" + data[i].alamat + "</td></tr>"
+
+            }
+        }
+        else {
+            head += "<tr><td>" + data.id + "</td>" + "<td>" + data.nama + "</td>" + "<td>" + data.alamat + "</td></tr>"
+
+        }
+        head += "</tbody></table>";
+        $("#list").html(head);
+    }
+    
+    
+</script>
+
